@@ -6,6 +6,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from flask_bcrypt import Bcrypt
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 metadata = MetaData(naming_convention={
     "ix": "ix_%(column_0_label)s",
@@ -17,8 +20,16 @@ metadata = MetaData(naming_convention={
 
 db = SQLAlchemy(metadata=metadata)
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+# print( os.environ.get('secret_key'))
+# app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_url_path='',
+    static_folder='../../client/dist',
+    template_folder='../../client/dist'
+)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('postgres')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 

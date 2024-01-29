@@ -5,7 +5,7 @@
 # flask db upgrade 
 
 # Standard imports/boilerplate setup (We added session)
-from flask import Flask, request, make_response, jsonify, session
+from flask import Flask, request, make_response, jsonify, session, render_template
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_cors import CORS
@@ -43,7 +43,7 @@ class handle_session(Resource):
         session["count"] += 1
         print(session)
         return {"count":session["count"]},200
-api.add_resource(handle_session,"/session")
+api.add_resource(handle_session,"/api/session")
 # Lets create a login route that will check if the user exist and
 # Save it to session
 
@@ -58,7 +58,7 @@ class Logout(Resource):
         # session.pop('user', None)
         # print(session)
         return {}, 204
-api.add_resource(Logout,'/logout')
+api.add_resource(Logout,'/api/logout')
 
 class Login(Resource):
     def post(self):
@@ -74,7 +74,7 @@ class Login(Resource):
                 return {"Error": "Not valid password"}, 400
         else:
             return {"Error": "Not valid username"}, 400
-api.add_resource(Login,'/login')
+api.add_resource(Login,'/api/login')
 
 class Check_Session(Resource):
     def get(self):
@@ -84,7 +84,12 @@ class Check_Session(Resource):
             return user.to_dict()
         else:
             return {"session": "user not found"}, 404
-api.add_resource(Check_Session, '/check_session')
+api.add_resource(Check_Session, '/api/check_session')
+
+@app.route('/')
+@app.route('/<int:id>')
+def index(id=0):
+    return render_template("index.html")
 
 if __name__ == '__main__':
     app.run(port=5555, debug = True)
